@@ -74,7 +74,7 @@ export default function SpotMap({ markers, onMarkerMove }: SpotMapProps) {
         )}
 
       {markers.map((marker, idx) => {
-        const avatarUrl = `https://unavatar.io/x/${marker.username}?fallback=https://randomuser.me/api/portraits/men/32.jpg`
+        const avatarUrl = `https://unavatar.io/twitter/${marker.username}?fallback=https://randomuser.me/api/portraits/men/32.jpg`
         const twitterProfileUrl = `https://twitter.com/${marker.username}` // URL Twitter
 
         // Ukuran icon diperbesar menjadi 70x70
