@@ -1,8 +1,66 @@
 @import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+}
+
+/* Avatar marker styling - updated untuk menghindari glitch */
+.leaflet-marker-icon.avatar-marker,
+.leaflet-marker-icon.avatar-marker img {
+  border-radius: 50% !important;
+  object-fit: cover;
+  border: 3px solid #fe11c5 !important;
+  background: #fff !important;
+  width: 50px !important;
+  height: 50px !important;
+  box-shadow: 0 4px 12px rgba(254, 17, 197, 0.4) !important;
+  padding: 0 !important;
+  pointer-events: auto !important;
+  cursor: grab !important;
+  transition: none !important; /* Hilangkan transition untuk mencegah glitch */
+}
+
+/* Glow variant untuk hover */
+.leaflet-marker-icon.avatar-marker-glow,
+.leaflet-marker-icon.avatar-marker-glow img {
+  border-radius: 50% !important;
+  object-fit: cover;
+  border: 4px solid #fe11c5 !important;
+  background: #fff !important;
+  width: 50px !important;
+  height: 50px !important;
+  box-shadow: 0 6px 20px rgba(254, 17, 197, 0.6) !important;
+  padding: 0 !important;
+  pointer-events: auto !important;
+  cursor: grab !important;
+  transition: none !important;
+}
+
+/* Popup styling */
+.leaflet-popup-content-wrapper {
+  border-radius: 16px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.leaflet-popup-tip {
+  background: white !important;
+}
+
+/* Animasi Garis Penghubung */
+@keyframes flow-data {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -20; /* Sesuaikan dengan dasharray (10+10) */
+  }
+}
+
+.animated-line {
+  stroke-dasharray: 10 10; /* 10px dash, 10px gap */
+  animation: flow-data 1s linear infinite;
 }
 
 @theme inline {
