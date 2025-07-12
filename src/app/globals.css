@@ -61,7 +61,11 @@
 .animated-line {
   stroke-dasharray: 10 10;
   stroke-dashoffset: 0; /* Pastikan nilai awal diatur */
-  animation: flow-data 1s linear infinite !important; /* Tambahkan !important */
+  animation-name: flow-data;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: forwards; /* Memastikan status akhir animasi dipertahankan */
 }
 
 /* Placeholder color */
