@@ -4,20 +4,28 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet"
 import "leaflet/dist/leaflet.css"
 import L from "leaflet"
 import { useEffect } from "react"
+import { Twitter } from "lucide-react" // Import ikon Twitter
 
 interface MarkerType {
   username: string
   lat: string
   lng: string
   pesan: string
+  // Tambahkan properti opsional untuk detail lebih lanjut
+  twitterUrl?: string
+  portfolioUrl?: string
+  longStory?: string
 }
 
 interface SpotMapProps {
   markers: MarkerType[]
-  onMarkerMove: (idx: number, lat: number, lng: number) => void
+  onMarkerMove: (idx: number, newLat: number, newLng: number) => void
+  // Hapus prop ini
+  // onMarkerClick: (marker: MarkerType) => void
 }
 
 export default function SpotMap({ markers, onMarkerMove }: SpotMapProps) {
+  // Hapus onMarkerClick dari destructuring props
   // Fix leaflet icon untuk Next.js
   useEffect(() => {
     delete (L.Icon.Default.prototype as any)._getIconUrl
@@ -38,7 +46,7 @@ export default function SpotMap({ markers, onMarkerMove }: SpotMapProps) {
     <MapContainer
       center={[-2.5, 118]}
       zoom={4}
-      minZoom={2} // Tambahkan properti minZoom di sini
+      minZoom={2}
       style={{ height: "500px", width: "100%", borderRadius: 16 }}
       className="shadow-inner"
     >
@@ -67,6 +75,7 @@ export default function SpotMap({ markers, onMarkerMove }: SpotMapProps) {
 
       {markers.map((marker, idx) => {
         const avatarUrl = `https://unavatar.io/x/${marker.username}?fallback=https://randomuser.me/api/portraits/men/32.jpg`
+        const twitterProfileUrl = `https://twitter.com/${marker.username}` // URL Twitter
 
         // Ukuran icon diperbesar menjadi 70x70
         const iconSize = [70, 70]
@@ -78,7 +87,7 @@ export default function SpotMap({ markers, onMarkerMove }: SpotMapProps) {
           iconSize: iconSize as L.PointExpression,
           iconAnchor: iconAnchor as L.PointExpression,
           popupAnchor: popupAnchor as L.PointExpression,
-          className: "avatar-marker",
+          className: "avatar-marker", // Base class
         })
 
         const avatarIconGlow = L.icon({
@@ -86,14 +95,14 @@ export default function SpotMap({ markers, onMarkerMove }: SpotMapProps) {
           iconSize: iconSize as L.PointExpression,
           iconAnchor: iconAnchor as L.PointExpression,
           popupAnchor: popupAnchor as L.PointExpression,
-          className: "avatar-marker-glow",
+          className: "avatar-marker-glow", // Glow class
         })
 
         return (
           <Marker
             key={idx}
             position={[Number.parseFloat(marker.lat), Number.parseFloat(marker.lng)]}
-            icon={avatarIcon}
+            icon={avatarIcon} // Mulai dengan icon dasar
             draggable={true}
             eventHandlers={{
               dragend: (e) => handleDragEnd(e, idx),
@@ -137,6 +146,17 @@ export default function SpotMap({ markers, onMarkerMove }: SpotMapProps) {
                   >
                     <p className="text-sm text-gray-700 italic leading-relaxed font-medium">"{marker.pesan}"</p>
                   </div>
+                  {/* Tombol Follow on Twitter */}
+                  <a
+                    href={twitterProfileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-flex items-center justify-center space-x-2 px-4 py-2 rounded-full text-white font-semibold transition-transform hover:scale-105 shadow-md"
+                    style={{ background: "linear-gradient(135deg, #FE11C5 0%, #E91E63 100%)" }}
+                  >
+                    <Twitter className="w-5 h-5" color="#f8fafc"/>
+                    <span className="text-slate-50">Follow on X</span>
+                  </a>
                 </div>
               </div>
             </Popup>

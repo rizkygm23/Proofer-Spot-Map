@@ -6,9 +6,11 @@ import { useState, useEffect } from "react"
 import dynamic from "next/dynamic"
 import CityInput from "./components/CityInput"
 import NetworkBackground from "./components/NetworkBackgound"
+// Hapus import modal baru
+// import ProoferDetailModal from "./components/ProoferDetailModal"
 import cities from "./data/cities.json"
 import { supabase } from "./lib/supabase"
-import { MapPin, Users, Globe, Sparkles, Zap } from "lucide-react"
+import { MapPin, Users, Globe, Sparkles, Zap, Search, X, UserPlus, MessageSquare, CheckCircle } from "lucide-react"
 
 const SpotMap = dynamic(() => import("./components/spotMap"), { ssr: false })
 
@@ -24,6 +26,10 @@ interface Marker {
   lat: string
   lng: string
   pesan: string
+  // Hapus properti opsional untuk detail lebih lanjut
+  // twitterUrl?: string
+  // portfolioUrl?: string
+  // longStory?: string
 }
 
 export default function Home() {
@@ -32,6 +38,10 @@ export default function Home() {
   const [pesan, setPesan] = useState("")
   const [markers, setMarkers] = useState<Marker[]>([])
   const [loading, setLoading] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  // Hapus state untuk modal
+  // const [isModalOpen, setIsModalOpen] = useState(false)
+  // const [selectedProofer, setSelectedProofer] = useState<Marker | null>(null)
 
   // Fetch all markers from Supabase on load
   useEffect(() => {
@@ -45,7 +55,21 @@ export default function Home() {
       setMarkers(
         data.map((row) => {
           const [lat, lng] = row.koordinat.split(",")
-          return { username: row.username, lat, lng, pesan: row.pesan }
+          // Hapus simulasi data tambahan untuk modal
+          // const dummyTwitterUrl = `https://twitter.com/${row.username}`
+          // const dummyPortfolioUrl = `https://${row.username}.vercel.app` // Contoh URL
+          // const dummyLongStory = `Halo! Saya ${row.username} dari ${row.koordinat}. Saya sangat antusias dengan komunitas proofer ini dan senang bisa berbagi cerita dari kota saya. Saya percaya bahwa setiap lokasi memiliki keunikan tersendiri yang patut dijelajahi.`
+
+          return {
+            username: row.username,
+            lat,
+            lng,
+            pesan: row.pesan,
+            // Hapus properti ini
+            // twitterUrl: dummyTwitterUrl,
+            // portfolioUrl: dummyPortfolioUrl,
+            // longStory: dummyLongStory,
+          }
         }),
       )
     setLoading(false)
@@ -98,6 +122,22 @@ export default function Home() {
     // Update local state biar langsung terlihat
     setMarkers((prev) => prev.map((m, i) => (i === idx ? { ...m, lat: newLat.toString(), lng: newLng.toString() } : m)))
   }
+
+  // Hapus handler saat marker diklik
+  // function handleMarkerClick(marker: Marker) {
+  //   setSelectedProofer(marker)
+  //   setIsModalOpen(true)
+  // }
+
+  // Filter markers based on search query
+  const filteredMarkers = markers.filter((marker) => {
+    const query = searchQuery.toLowerCase()
+    return (
+      marker.username.toLowerCase().includes(query) || marker.pesan.toLowerCase().includes(query)
+      // Untuk filter berdasarkan kota, Anda perlu menyimpan nama kota di objek marker
+      // atau melakukan reverse geocoding (lebih kompleks)
+    )
+  })
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50">
@@ -267,10 +307,35 @@ export default function Home() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        {/* Search and Filter Section */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
+            <Search className="w-6 h-6" style={{ color: "#FE11C5" }} />
+            <span>Find Proofers</span>
+          </h2>
+          <div className="relative">
+            <input
+              type="text"
+              className="w-full pl-12 pr-12 py-4 border-2 border-gray-200 rounded-2xl transition-all duration-200 bg-white placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-4 focus:ring-pink-200"
+              placeholder="Search by username or message..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            {searchQuery && (
+              <button
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                onClick={() => setSearchQuery("")}
+                aria-label="Clear search"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+        </div>
+
         {/* Map Section - Sekarang lebar penuh */}
         <div id="map-section" className="space-y-6 mb-12">
-          {" "}
-          {/* Tambahkan ID di sini */}
           <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-6 relative overflow-hidden">
             {/* Subtle background pattern */}
             <div className="absolute inset-0 opacity-5">
@@ -294,14 +359,15 @@ export default function Home() {
                 <p className="text-gray-600">Drag markers to update your location in real-time</p>
               </div>
               <div className="rounded-2xl overflow-hidden shadow-lg">
-                <SpotMap markers={markers} onMarkerMove={handleMarkerMove} />
+                <SpotMap markers={filteredMarkers} onMarkerMove={handleMarkerMove} />{" "}
+                {/* Hapus onMarkerClick dari sini */}
               </div>
             </div>
           </div>
         </div>
 
         {/* Stats Card - Sekarang di bawah peta, lebar penuh */}
-        <div className="w-full">
+        <div className="w-full mb-12">
           <div
             className="rounded-3xl p-6 border backdrop-blur-sm"
             style={{
@@ -329,7 +395,67 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        {/* How It Works Section */}
+        <div className="w-full">
+          <div
+            className="rounded-3xl p-6 border backdrop-blur-sm"
+            style={{
+              background: "linear-gradient(135deg, rgba(254, 17, 197, 0.1) 0%, rgba(233, 30, 99, 0.1) 100%)",
+              borderColor: "rgba(254, 17, 197, 0.2)",
+            }}
+          >
+            <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
+              <Sparkles className="w-5 h-5" style={{ color: "#FE11C5" }} />
+              <span>How It Works</span>
+            </h3>
+            <p className="text-gray-700 mb-6">
+              Joining the Proofer Spot Map is easy! Follow these simple steps to add your location and connect with the
+              global community.
+            </p>
+            <div className="space-y-6">
+              <div className="flex items-start space-x-4">
+                <div className="p-3 rounded-full flex-shrink-0" style={{ backgroundColor: "rgba(254, 17, 197, 0.1)" }}>
+                  <UserPlus className="w-6 h-6" style={{ color: "#FE11C5" }} />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900 text-lg">1. Enter Your Details</h4>
+                  <p className="text-gray-700">
+                    Fill in your Twitter username, select your city from the suggestions, and share a short message or
+                    fun fact about your location.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4">
+                <div className="p-3 rounded-full flex-shrink-0" style={{ backgroundColor: "rgba(254, 17, 197, 0.1)" }}>
+                  <MessageSquare className="w-6 h-6" style={{ color: "#FE11C5" }} />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900 text-lg">2. Add to Map</h4>
+                  <p className="text-gray-700">
+                    Click the "Add Me to the Map" button. Your location will instantly appear on the global network.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4">
+                <div className="p-3 rounded-full flex-shrink-0" style={{ backgroundColor: "rgba(254, 17, 197, 0.1)" }}>
+                  <CheckCircle className="w-6 h-6" style={{ color: "#FE11C5" }} />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900 text-lg">3. Explore & Connect</h4>
+                  <p className="text-gray-700">
+                    Browse the map to see other proofers, click on markers to view their stories, and connect with the
+                    community!
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
+
+      {/* Hapus Proofer Detail Modal */}
+      {/* <ProoferDetailModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} proofer={selectedProofer} /> */}
     </div>
   )
 }
