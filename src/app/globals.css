@@ -54,18 +54,19 @@
     stroke-dashoffset: 0;
   }
   to {
-    stroke-dashoffset: -20; /* Sesuaikan dengan dasharray (10+10) */
+    stroke-dashoffset: -30; /* Sesuaikan dengan dasharray (20+10) */
   }
 }
 
 .animated-line {
-  stroke-dasharray: 10 10;
+  stroke-dasharray: 20 10; /* Dash 20px, Gap 10px */
   stroke-dashoffset: 0; /* Pastikan nilai awal diatur */
   animation-name: flow-data;
   animation-duration: 1s;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
-  animation-fill-mode: forwards; /* Memastikan status akhir animasi dipertahankan */
+  animation-fill-mode: forwards;
+  will-change: stroke-dashoffset; /* Hint browser for optimization */
 }
 
 /* Placeholder color */
