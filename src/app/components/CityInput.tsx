@@ -80,11 +80,6 @@ export default function CityInput({
               className={`p-4 cursor-pointer transition-colors duration-150 flex items-center space-x-3 hover:bg-opacity-50 ${
                 index === 0 ? "rounded-t-2xl" : ""
               } ${index === suggestions.length - 1 ? "rounded-b-2xl" : "border-b border-gray-100"}`}
-              style={{
-                ":hover": {
-                  backgroundColor: "rgba(254, 17, 197, 0.1)",
-                },
-              }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = "rgba(254, 17, 197, 0.1)"
               }}
