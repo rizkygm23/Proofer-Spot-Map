@@ -81,7 +81,7 @@ export default function Home() {
     setLoading(true) // Set loading true saat submit
     const found = (cities as City[]).find((c) => c.name === city)
     if (!found) {
-      alert("Pilih kota dari saran!")
+      alert("Choice City From suggestion")
       setLoading(false) // Reset loading jika ada error
       return
     }
